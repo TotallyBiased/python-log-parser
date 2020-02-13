@@ -1,17 +1,26 @@
 import re
+import operator
 
 pattern = re.compile('^(\S+) (\S+) (\S+) \[([\w:\/]+\s[+\-]\d{4})\] "(\S+)\s?(\S+)?\s?(\S+)?" (\d{3}|-) (\d+|-)\s?"?([^"]*)"?\s?"?([^"]*)?"?')
 
 records = {}
 logCount = 0
+urlsRecord = {}
 with open('apache-logs.log', "r") as f:
 	for line in f:
 		logCount += 1
 		result = pattern.match(line)
-		if records.get(result.group(1)) == None:
-			records[result.group(1)] = [result.groups()]
+		ipAddress = result.group(1)
+		if records.get(ipAddress) is None:
+			records[ipAddress] = [result.groups()]
 		else:
-			records[result.group(1)].append(result.groups())
+			records[ipAddress].append(result.groups())
+
+		url = result.groups()[5]
+		if urlsRecord.get(url) is None:
+			urlsRecord[url] = 1
+		else:
+			urlsRecord[url] += 1
 
 print('Out of \'{0}\' logs, there were \'{1}\' unquie IP addresses'.format(logCount, len(records)))
 
@@ -23,19 +32,9 @@ print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[0]["ip"], ipAddresses
 print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[0]["ip"], ipAddresses[0]["count"]))
 print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[0]["ip"], ipAddresses[0]["count"]))
 
-urls = []
-for ip, list in records.items():
-	for log in list:
-		url = [i for i in urls if i["url"] == log[5]]
-		# print(url)
-		if url == []:
-			urls.append({"url": log[5], "count": 1 })
-		else:
-			url[0]["count"] += 1
-
-urls.sort(key=lambda x: x["count"], reverse=True)
+sortedUrls = sorted(urlsRecord.items(), key=operator.itemgetter(1), reverse=True)
 
 print("\nTop 3 URLs")
-print('URL: \'{0}\', count: {1}'.format(urls[0]["url"], urls[0]["count"]))
-print('URL: \'{0}\', count: {1}'.format(urls[1]["url"], urls[1]["count"]))
-print('URL: \'{0}\', count: {1}'.format(urls[2]["url"], urls[2]["count"]))
+print('URL: \'{0}\', count: {1}'.format(sortedUrls[0][0], sortedUrls[0][1]))
+print('URL: \'{0}\', count: {1}'.format(sortedUrls[1][0], sortedUrls[1][1]))
+print('URL: \'{0}\', count: {1}'.format(sortedUrls[2][0], sortedUrls[2][1]))
