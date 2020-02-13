@@ -29,8 +29,8 @@ ipAddresses.sort(key=lambda x: x["count"], reverse=True)
 
 print("\nTop 3 IP addresses")
 print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[0]["ip"], ipAddresses[0]["count"]))
-print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[0]["ip"], ipAddresses[0]["count"]))
-print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[0]["ip"], ipAddresses[0]["count"]))
+print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[1]["ip"], ipAddresses[1]["count"]))
+print('IP Address: \'{0}\', count: {1}'.format(ipAddresses[2]["ip"], ipAddresses[2]["count"]))
 
 sortedUrls = sorted(urlsRecord.items(), key=operator.itemgetter(1), reverse=True)
 
